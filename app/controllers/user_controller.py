@@ -1,5 +1,5 @@
-from app.schemas.user_schema import CreateUser
-from fastapi import APIRouter, Depends
+from app.schemas.user_schema import CreateUser, UserRequest
+from fastapi import APIRouter, Depends, Request
 from app.services.user_service import UserService
 from app.repositories.user_repository import UserRepository
 from typing import List
@@ -15,7 +15,7 @@ def get_user_service(db=Depends(get_db)) -> UserService:
     return UserService(repository)
 
 @UserRouter.post("/users/register", response_model=CreateUser)
-def create_user(user: CreateUser, service: UserService = Depends(get_user_service)):
+def create_user(user: UserRequest, service: UserService = Depends(get_user_service)):
     return service.create_user(user)
 
 @UserRouter.get("/users/", response_model=List[CreateUser])

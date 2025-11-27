@@ -1,12 +1,8 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional, List
-import random
 
-def generate_random_numbers():
-    return [random.randint(1, 25) for number in range(3)]
-
-class GamesModel(BaseModel):
+class GameConfigModel(BaseModel):
 
     id: Optional[str] = None
     name: str

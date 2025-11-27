@@ -1,6 +1,6 @@
 from app.middlewares.exceptions.bad_request import BadRequestError
 from app.repositories.wallets_repository import WalletRepository
-from app.schemas.wallets_schemas import WalletSchemas, WalletSchemasBody
+from app.schemas.wallets_schemas import WalletCreate, WalletSchemas, WalletSchemasBody
 
 
 class WalletService:
@@ -8,7 +8,7 @@ class WalletService:
     def __init__(self, repository: WalletRepository):
         self.repository = repository
 
-    def create_wallets(self, data: WalletSchemas) -> WalletSchemas:
+    def create_wallets(self, data: WalletCreate) -> WalletSchemas:
         try:
             wallet = self.repository.create_wallets(data)
             if not wallet:

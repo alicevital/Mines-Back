@@ -1,13 +1,16 @@
 from typing import List
 from app.repositories.user_repository import UserRepository
+from app.repositories.wallets_repository import WalletRepository
 from app.schemas.user_schema import CreateUser
 from app.middlewares.exceptions import BadRequestError, NotFoundError, UnauthorizedError, InternalServerError
+from app.schemas.wallets_schemas import WalletCreate
 
 
 class UserService:
 
-    def __init__(self, repository: UserRepository):
+    def __init__(self, repository: UserRepository, wallet_repository: WalletRepository):
         self.repository = repository
+        self.wallet_repository = wallet_repository
 
     def create_user(self, user: CreateUser):
 
@@ -16,6 +19,13 @@ class UserService:
         
         user_dict = user.model_dump(exclude_unset=True)
         created = self.repository.create_user(user_dict)
+
+        wallet_data = WalletCreate(
+            user_id=str(created["_id"]),
+            balance=5000
+        )
+
+        self.wallet_repository.create_wallets(wallet_data)
 
         return CreateUser(
             id=str(created["_id"]),

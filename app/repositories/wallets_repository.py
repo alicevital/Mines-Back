@@ -1,9 +1,11 @@
 from datetime import datetime
 
 from bson import ObjectId
+
 from app.schemas.transactions_schemas import TransactionsSchemas
 from app.schemas.wallets_schemas import WalletCreate, WalletSchemas
 from app.middlewares.exceptions import BadRequestError
+
 from pymongo.database import Database
 
 
@@ -16,10 +18,13 @@ class WalletRepository:
 
 
     def get_balance(self, user_id: str) -> WalletSchemas:
+        
         wallet = self.collection_wallet.find_one({"user_id": user_id})
+        
         if not wallet:
             return None
         return WalletSchemas(**wallet)
+    
 
     def create_wallets(self, data: WalletCreate) -> WalletSchemas:
         wallet_exists = self.collection_wallet.find_one({"user_id": data.user_id})

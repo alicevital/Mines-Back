@@ -88,12 +88,7 @@ class GameService:
         self.wallet_repo.debit(user_id, bet_amount, match_id)
 
         # 6) criar exchange e queue
-        self.rabbitmq.create_exchange("mines.events")
-        self.rabbitmq.create_queue(
-            queue="mines.games",
-            exchange="mines.events",
-            routing_key="GAME_STARTED"
-        )
+        
 
         # 7) notificar WebSocket e RabbitMQ do evento GAME_STARTED
         try:

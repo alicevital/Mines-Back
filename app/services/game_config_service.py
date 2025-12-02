@@ -58,3 +58,17 @@ class GameConfigService:
         except Exception as e:
             if isinstance(e, HTTPException): raise e
             raise HTTPException(status_code=500, detail=f"Erro ao atualizar as configurações do jogo: {str(e)}")
+        
+    def delete_game_config(self, game_id):
+        try:
+            deleted_count = self.repository.delete_game_config(game_id)
+
+            if deleted_count == 0:
+                raise HTTPException(status_code=404, detail="Configuração do game não encontrada para exclusão")
+            
+            return
+            
+        except Exception as e:
+            if isinstance(e, HTTPException):
+                raise e
+            raise HTTPException(status_code=500, detail="Erro ao deletar as configurações do jogo")

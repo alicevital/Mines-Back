@@ -27,3 +27,9 @@ class GameConfigRepository:
             {"_id": ObjectId(game_id)},
             {"$set": update_data}
         )
+    
+    def delete_game_config(self, game_id):
+        result = self.db.game_config.delete_one({"_id": ObjectId(game_id)})
+
+        return result.deleted_count
+

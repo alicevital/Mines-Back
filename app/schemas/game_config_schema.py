@@ -25,7 +25,7 @@ class GameConfigSchema(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    @field_serializer('created_at', 'updated_at')
+    @field_serializer('created_at')
     def serialize_dt(self, dt: datetime, _info):
         return dt.strftime("%d/%m/%Y %H:%M")
 

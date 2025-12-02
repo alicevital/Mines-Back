@@ -41,7 +41,7 @@ class UserService:
             list = []
             
             if not users:
-                return BadRequestError("Não Há Usuários")
+                raise BadRequestError("Não Há Usuários")
             
             for doc in users:
                 list.append(
@@ -53,8 +53,11 @@ class UserService:
                 )
             return list
         
+        except BadRequestError:
+            raise
+        
         except Exception as e:
-            raise Exception(f"Erro ao listar users: {str(e)}")
+            raise Exception(f"Erro interno ao listar users: {str(e)}")
 
 
     def get_user_by_id(self, user_id: str) -> CreateUser:
@@ -62,7 +65,6 @@ class UserService:
         try:
 
             user = self.repository.get_user_by_id(user_id)
-            print("DEBUG USER FROM DB: ", user)
 
             if not user:
                 raise NotFoundError(user_id)

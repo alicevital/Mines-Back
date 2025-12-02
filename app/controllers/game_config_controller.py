@@ -32,3 +32,7 @@ def update_game_config(
     service: GameConfigService = Depends(get_game_config_service)
 ):
     return service.update_game_config(game_config_id, game_update)
+
+@GameConfigRouter.delete("/admin/game-config/{game_config_id}")
+def delete_game_config(game_config_id: str, service: GameConfigService = Depends(get_game_config_service)):
+    service.delete_game_config(game_config_id)

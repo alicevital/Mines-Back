@@ -1,3 +1,4 @@
+from datetime import datetime
 from bson import ObjectId
 from pymongo.collection import Collection
 
@@ -29,3 +30,28 @@ class MatchRepository:
             return result
         except:
             pass
+
+    def update_step(self, match_id, current_step):
+        try:
+            return self.collection.update_one(
+                {"_id": ObjectId(match_id)},
+                {"$set": {"current_step": current_step}}
+            )
+        except Exception as e:
+            raise Exception(f"Erro ao atualizar current_step: {str(e)}")
+
+
+    def finish_match(self, match_id, current_step, status):
+        try:
+            return self.collection.update_one(
+                {"_id": ObjectId(match_id)},
+                {
+                    "$set": {
+                        "current_step": current_step,
+                        "finished_at": datetime.utcnow().strftime("%d/%m/%Y-%H:%M"),
+                        "status": status
+                    }
+                }
+            )
+        except Exception as e:
+            raise Exception(f"Erro ao finalizar partida: {str(e)}")

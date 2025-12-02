@@ -1,4 +1,5 @@
 import asyncio
+from app.controllers.game_step_controller import GameStepRouter
 from app.core.config import RABBITMQ_URI
 from app.utils.rabbitmq import RabbitMQPublisher
 from fastapi import FastAPI
@@ -21,6 +22,8 @@ app.include_router(GameRouter)
 
 app.include_router(GameConfigRouter)
 app.include_router(StatusRouter)
+app.include_router(GameStepRouter)
+
 
 # Handler de Eventos
 rabbitmq = RabbitMQPublisher(RABBITMQ_URI)

@@ -99,7 +99,9 @@ class GameStepService:
                 self.rabbitmq,
                 user_id,
                 "GAME_LOSE",
-                {}
+                {
+                    "mines_positions": mines_positions
+                }
             )
 
             # Finalizar partida

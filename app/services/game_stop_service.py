@@ -69,7 +69,8 @@ class GameStopService:
             {
                 "match_id": match_id,
                 "steps": current_step,
-                "prize": prize
+                "prize": prize,
+                "mines_positions": match['mines_positions']
             }
         )
 

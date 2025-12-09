@@ -1,17 +1,9 @@
-async def dispatch_event(rabbitmq, user_id: str, event: str, data: dict):
-    from app.controllers.game_ws_controller import ws_send_to_user
+active_connections = {}
 
-    """
-    Publica um evento no RabbitMQ e envia pelo WebSocket.
-    """
-    body = {"event": event, **data}
 
-    # Publica no RabbitMQ
-    rabbitmq.publish(
-        exchange="mines.events",
-        routing_key=event,
-        body=body
-    )
+async def dispatch_event_ws(user_id: str, event: str, data: dict):
 
-    # Envia pelo WS
-    await ws_send_to_user(user_id, body)
+    ws = active_connections.get(user_id)
+    if ws:
+        body = {"event": event, **data}
+        await ws.send_json(body)

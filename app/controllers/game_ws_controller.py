@@ -1,28 +1,55 @@
 from fastapi import APIRouter, WebSocket
 import json
-from app.utils.process_events import process_events_ws
+
+from app.database.db import get_database
+from app.core.config import RABBITMQ_URI
+
+from app.repositories.match_repository import MatchRepository
+from app.repositories.wallets_repository import WalletRepository
+
+from app.utils.dispatcher import active_connections
+from app.utils.rabbitmq import RabbitMQPublisher
+
+from app.services.game_services import GameService
+from app.services.game_steps_service import GameStepService
+from app.services.game_stop_service import GameStopService
+
+
+
+db = get_database()
+match_repo = MatchRepository(db["matches"])
+wallet_repo = WalletRepository(db)
+rabbit = RabbitMQPublisher(RABBITMQ_URI)
+
+game_start_service = GameService(match_repo, wallet_repo, rabbit)
+game_step_service = GameStepService(match_repo, rabbit, wallet_repo)
+game_stop_service = GameStopService(match_repo, wallet_repo, rabbit)
 
 
 WebSocketRouter = APIRouter()
 
-active_connections = {}
 
+async def process_events_ws(event: str, data: dict):
 
-async def ws_send_to_user(user_id: str, message: dict):
-    '''
-    Função que envia para o user por meio de websocket
-    '''
-    ws = active_connections.get(user_id)
-    if ws:
-        await ws.send_json(message)
+    if event == "GAME_START":
+        await game_start_service.start_game(
+            user_id=data.get("user_id"),
+            bet_amount=data.get("bet_amount"),
+            total_mines=data.get("total_mines")
+        )
 
+    elif event == "GAME_STEP":
+        await game_step_service.step_in_game(
+            cell=data["cell"],
+            matches_id=data["match_id"]
+        )
 
+    elif event == "GAME_CASHOUT":
+        await game_stop_service.stop_game(
+            match_id=data["match_id"]
+        )
 
-async def ws_broadcast(message: dict):
-    '''Função que envia broadcast por meio de websocket'''
-    for ws in active_connections.values():
-        await ws.send_json(message)
-
+    return {"error": "Evento inválido"}
 
 
 @WebSocketRouter.websocket("/ws/{user_id}")

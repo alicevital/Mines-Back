@@ -28,9 +28,16 @@ docker compose up --build
 ## Eventos
 
 ```python
-{"event":"GAME_START","data":{"user_id":"...","bet_amount":100,"total_mines":3}}
+{"event":"GAME_START","data":{"bet_amount":100, "total_cells": 25, "total_mines":3}, "user_id":"693b1ae292177f973de0729c"}
 {"event":"GAME_STEP","data":{"match_id":"...","cell":5}}
 {"event":"GAME_CASHOUT","data":{"match_id":"..."}}
 {"event": "GAME_WIN","prize": prize, "mines_positions": mines_positions}
 {"event": "GAME_LOSE", "mines_positions": mines_positions}
+```
+
+```python
+safe_cells = total_cells - total_mines
+progress = current_step / safe_cells
+prize_step = progress + (bet_amount * 0.02)
+prize = round(bet_amount * (1 + prize_step), 2)
 ```
